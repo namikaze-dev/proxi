@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"net/http"
 	"os"
@@ -16,8 +15,11 @@ var env struct {
 
 func main() {
 	// setup env
-	flag.StringVar(&env.addr, "addr", "localhost:8000", "Address of the proxy [default: '127.0.0.1:8000'")
-	flag.Parse()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	env.addr = ":" + port
 
 	env.infoLog = log.New(os.Stdout, "[INFO:] ", log.Ldate|log.Ltime)
 	env.errLog = log.New(os.Stderr, "[ERROR:] ", log.Ldate|log.Ltime|log.Lshortfile)
@@ -33,7 +35,7 @@ func main() {
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
-		ErrorLog: env.errLog,
+		ErrorLog:     env.errLog,
 	}
 
 	env.infoLog.Println("proxy server running on", env.addr)
