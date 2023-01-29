@@ -23,7 +23,9 @@ func main() {
 	env.errLog = log.New(os.Stderr, "[ERROR:] ", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// setup server
-	proxyHandler := &proxy{}
+	proxyHandler := &proxy{
+		client: http.DefaultClient,
+	}
 
 	serv := &http.Server{
 		Addr:         env.addr,
@@ -31,6 +33,7 @@ func main() {
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
+		ErrorLog: env.errLog,
 	}
 
 	env.infoLog.Println("proxy server running on", env.addr)
